@@ -113,3 +113,12 @@
         />
     </SettingsCategory>
 {/if}
+
+<SettingsCategory sectionId="tabs" title={$t("settings.tabs")}>
+    <SettingsToggle
+        settingContext="appearance"
+        settingId="hidePlaylistTab"
+        title={$t("settings.tabs.hide_playlist")}
+        description={$t("settings.tabs.hide_playlist.description")}
+    />
+</SettingsCategory>

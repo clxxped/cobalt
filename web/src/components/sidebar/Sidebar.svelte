@@ -33,7 +33,9 @@
     <div id="sidebar-tabs" role="tablist">
         <div id="sidebar-actions" class="sidebar-inner-container">
             <SidebarTab name="save" path="/" icon={IconDownload} />
-            <SidebarTab name="playlist" path="/playlist" icon={IconPlaylist} beta />
+            {#if !$settings.appearance.hidePlaylistTab}
+                <SidebarTab name="playlist" path="/playlist" icon={IconPlaylist} beta />
+            {/if}
             {#if !$settings.appearance.hideRemuxTab}
                 <SidebarTab name="remux" path="/remux" icon={IconRepeat} beta />
             {/if}
