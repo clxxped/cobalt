@@ -6,8 +6,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  WEB_DEFAULT_API: "https://pizza.br0k3.me"
-  WEB_HOST: "https://cobalt.br0k3.me"
 
 jobs:
   build-and-push-image:
@@ -15,10 +13,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    strategy:
-      matrix:
-        target: [api, web]
-    
 
     steps:
       - name: Checkout repository
@@ -33,7 +27,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.PAT }}
 
       - name: Get release metadata
         id: release-meta
@@ -42,25 +36,24 @@ jobs:
             echo "commit_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
             echo "version=$version" >> $GITHUB_OUTPUT
             echo "major_version=$(echo "$version" | cut -d. -f1)" >> $GITHUB_OUTPUT
-
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          tags: type=raw,value=${{ steps.release-meta.outputs.major_version }}-${{ matrix.target }}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=${{ steps.release-meta.outputs.version }}
+            type=raw,value=${{ steps.release-meta.outputs.major_version }}
+            type=raw,value=${{ steps.release-meta.outputs.version }}-${{ steps.release-meta.outputs.commit_short }}
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
-          target: ${{ matrix.target }}
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            WEB_DEFAULT_API=${{ env.WEB_DEFAULT_API }}
-            WEB_HOST=${{ env.WEB_HOST }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
