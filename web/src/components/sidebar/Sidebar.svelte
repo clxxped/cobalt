@@ -33,8 +33,8 @@
     <div id="sidebar-tabs" role="tablist">
         <div id="sidebar-actions" class="sidebar-inner-container">
             <SidebarTab name="save" path="/" icon={IconDownload} />
-            {#if !$settings.appearance.hidePlaylistTab}
-                <SidebarTab name="playlist" path="/playlist" icon={IconPlaylist} beta />
+            {#if !$settings.appearance.hidePlaylistTab && (!$settings.processing.customInstanceURL || $settings.processing.customInstanceURL.includes("clxxped.lol"))}
+                <SidebarTab name="playlist" path="/playlist" icon={IconPlaylist}/>
             {/if}
             {#if !$settings.appearance.hideRemuxTab}
                 <SidebarTab name="remux" path="/remux" icon={IconRepeat} beta />

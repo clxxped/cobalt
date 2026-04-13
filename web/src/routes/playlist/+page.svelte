@@ -1,5 +1,6 @@
 <script>
     import { t } from "$lib/i18n/translations";
+    import settings from "$lib/state/settings";
 
     import Omnibox from "$components/playlist/Omnibox.svelte";
     import Meowbalt from "$components/misc/Meowbalt.svelte";
@@ -12,15 +13,17 @@
     <meta property="og:title" content={$t("general.cobalt")} />
 </svelte:head>
 
-{createDialog({
-    id: "beta-dialog",
-    meowbalt: "question",
-    title: "beta feature",
-    bodyText: $t("playlist.label.warning"),
-    dismissable: true,
-    leftAligned: true,
-    type: "small"
-})}
+{#if !$settings.processing.enableCustomInstances}
+    {createDialog({
+        id: "instance-warning",
+        title: "instance warning",
+        bodyText: $t("playlist.instance.warning"),
+        dismissable: true,
+        leftAligned: true,
+        type: "small"
+    })}
+{/if}
+
 <div id="cobalt-playlist-container" class="center-column-container">
     <SupportedServices />
     <main
