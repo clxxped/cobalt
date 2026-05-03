@@ -1,4 +1,4 @@
-name: Build release Docker image
+name: Build staging Docker image
 
 on:
   workflow_dispatch:
