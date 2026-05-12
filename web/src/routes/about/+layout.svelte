@@ -11,6 +11,7 @@
     import IconChecklist from "@tabler/icons-svelte/IconChecklist.svelte";
     import IconUsersGroup from "@tabler/icons-svelte/IconUsersGroup.svelte";
     import IconHeartHandshake from "@tabler/icons-svelte/IconHeartHandshake.svelte";
+    import IconLink from '@tabler/icons-svelte/IconLink.svelte';
 </script>
 
 <PageNav
@@ -26,6 +27,12 @@
                 path="/about/general"
                 title={$t("about.page.general")}
                 icon={IconComet}
+                iconColor="blue"
+            />
+            <PageNavTab
+                path="/about/instance"
+                title="instance information"
+                icon={IconLink}
                 iconColor="blue"
             />
             <PageNavTab
