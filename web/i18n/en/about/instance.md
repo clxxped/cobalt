@@ -36,8 +36,7 @@ supported instances can be found on [cobalt.directory](https://cobalt.directory)
     title = "credits"
     sectionId ="credits"
 />
-- [br0k3x](https://github.com/br0k3x) Playlist 
-Code
+- [br0k3x](https://github.com/br0k3x) Playlist Code
 - [zImPatrick](https://github.com/zImPatrick) Most of the fixes for youtube and other services
-- [hyperdefined](https://hyper.lol) help/guides for hosting with warp -
+- [hyperdefined](https://hyper.lol) help/guides for hosting with warp
 </section>
