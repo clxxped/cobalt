@@ -13,7 +13,7 @@
 
 this instance is hosted by [clxxped](https://clxxped.lol).
 
-the public repository can be found[here](https://github.com/clxxped/cobalt)
+the public repository can be found [here](https://github.com/clxxped/cobalt)
 
 currently the frontend works similarly to default cobalt in that it will cycle instances for each request. if a request doesn't work it's good to try and do it multiple times so that you can get a working instance.
 </section>
