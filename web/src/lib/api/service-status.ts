@@ -7,7 +7,7 @@ import type {
     ServiceTestResult,
 } from "$lib/types/service-status";
 
-const CACHE_DURATION_MS = 0;
+const CACHE_DURATION_MS = 5 * 60 * 1000;
 
 const serviceNameToTestKey: Record<string, string> = {
     "bluesky": "bluesky",
