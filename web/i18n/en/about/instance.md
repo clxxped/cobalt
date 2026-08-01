@@ -37,7 +37,7 @@ supported instances can be found on [cobalt.directory](https://cobalt.directory)
     sectionId ="logging"
 />
 
-all traffic to my instances is logged and can be checked by me, the information logged only includes request headers and response codes/headers. I can't see any information sent to instances other than turnstile headers, api keys or content_length headers.
+all traffic to my instances is logged and can be checked by me, the information logged only includes request headers and response codes/headers. I can't see any information sent to instances other than turnstile headers, api keys or content_length headers. (Please note also that I can see all public ips used to send requests to my instances, I can assure you that they will not be used in any harmful way other than detecting misuse of these services).
 </section>
 
 <section id="api">
