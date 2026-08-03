@@ -54,8 +54,11 @@ all instances associated with this frontend use turnstile, if you would like acc
     title = "credits"
     sectionId ="credits"
 />
+
 - [br0k3x](https://github.com/br0k3x) Playlist 
 Code
+
 - [zImPatrick](https://github.com/zImPatrick) Most of the fixes for youtube and other services
+  
 - [hyperdefined](https://hyper.lol) help/guides for hosting with warp
 </section>
