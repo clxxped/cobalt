@@ -46,7 +46,7 @@ all traffic to my instances is logged and can be checked by me, the information 
     sectionId ="api"
 />
 
-all instances associated with this frontend use turnstile, if you would like access please contact me via discord or email (depending if it works) and I will most likely give you a key. I don't enforce much strict rules with keys but I will sometimes monitor usage of my keys. (Also please note I have a base rate limit of 10 requests/minute for all newly made keys)
+all instances associated with this frontend use turnstile, if you would like access please contact me via discord or email [clxxped@mail.clxxped.lol](mailto:clxxped@mail.clxxped.lol) and I will most likely give you a key. I don't enforce much strict rules with keys but I will sometimes monitor usage of my keys. (Also please note I have a base rate limit of 10 requests/minute for all newly made keys)
 </section>
 
 <section id="credits">
@@ -54,6 +54,7 @@ all instances associated with this frontend use turnstile, if you would like acc
     title = "credits"
     sectionId ="credits"
 />
+    
 [br0k3x](https://github.com/br0k3x) Playlist 
 Code
 
