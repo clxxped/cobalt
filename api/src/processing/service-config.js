@@ -67,6 +67,12 @@ export const services = {
         patterns: ["share/:id", "embed/:id"],
         playlistSupport: false
     },
+    medal: {
+        patterns: [
+            "games/:game/clips/:id"
+        ],
+        tld: "tv",
+    },
     ok: {
         patterns: [
             "video/:id",
