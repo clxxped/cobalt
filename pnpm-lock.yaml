@@ -62,6 +62,9 @@ importers:
       set-cookie-parser:
         specifier: 2.7.2
         version: 2.7.2
+      soundcloud.ts:
+        specifier: ^0.7.4
+        version: 0.7.4
       undici:
         specifier: ^6.22.0
         version: 6.24.0
@@ -1078,6 +1081,9 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
+  browser-id3-writer@6.4.0:
+    resolution: {integrity: sha512-4tbo+MMGuINslAzZugHdLDGj6m2vKqgXqG4QXBYnPJndRw1jx1eGlDMNwsR6lKrjuzw+GZtHwFNoKuUJBbF22A==}
+
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
@@ -1330,6 +1336,7 @@ packages:
   eslint@9.39.4:
     resolution: {integrity: sha512-XoMjdBOwe/esVgEvLmNsD3IRHkm7fbKIUGvrleloJXUZgDHig2IPWNniv+GwjyJXzuNqVjlr5+4yVUZjycJwfQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -2086,6 +2093,9 @@ packages:
   sirv@3.0.2:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
+
+  soundcloud.ts@0.7.4:
+    resolution: {integrity: sha512-lP8INW6uloP3dHR75cj7CtRhwXLlxySW2WK/yzi2RlaRqOODF2F8E0xCZJxviqW8AtwtkU0jVjspaN4iRbEa5g==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -3189,6 +3199,8 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
+  browser-id3-writer@6.4.0: {}
+
   buffer-from@1.1.2: {}
 
   buffer@5.7.1:
@@ -4266,6 +4278,10 @@ snapshots:
       '@polka/url': 1.0.0-next.29
       mrmime: 2.0.1
       totalist: 3.0.1
+
+  soundcloud.ts@0.7.4:
+    dependencies:
+      browser-id3-writer: 6.4.0
 
   source-map-js@1.2.1: {}
 
