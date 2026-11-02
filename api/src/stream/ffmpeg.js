@@ -92,8 +92,7 @@ const render = async (res, streamInfo, ffargs, estimateMultiplier) => {
             await estimateTunnelLength(streamInfo, estimateMultiplier)
         );
 
-        // Keep the response open until shutdown can report an empty ffmpeg output as an error.
-        pipe(muxOutput, res, shutdown, { end: false });
+        pipe(muxOutput, res, shutdown);
 
         process.on('close', shutdown);
         res.on('finish', shutdown);
