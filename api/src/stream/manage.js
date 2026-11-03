@@ -95,9 +95,11 @@ export function createProxyTunnels(info) {
         proxyTunnels.push(
             createStream({
                 ...tunnelTemplate,
+                type: info?.isHLS ? "hls-remux" : "proxy",
                 url,
                 service: info?.service,
                 originalRequest: info?.originalRequest,
+                isHLS: info?.isHLS,
             })
         );
     }

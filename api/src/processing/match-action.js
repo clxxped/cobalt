@@ -265,7 +265,7 @@ export default function({
 
     // TODO: add support for HLS
     // (very painful)
-    if (!params.isHLS && responseType !== "picker") {
+    if ((!params.isHLS || defaultParams.cover) && responseType !== "picker") {
         const isPreferredWithExtra =
             localProcessing === "preferred" && extraProcessingTypes.has(params.type);
 
