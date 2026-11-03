@@ -144,6 +144,7 @@ export const services = {
         patterns: [
             ":shortLink",
             "spotlight/:spotlightId",
+            ":username/spotlight/:spotlightId",
             "add/:username/:storyId",
             "u/:username/:storyId",
             "add/:username",
