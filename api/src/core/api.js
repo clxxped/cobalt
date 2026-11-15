@@ -327,12 +327,12 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         return stream(res, streamInfo);
     });
 
-    app.get('/playlist/getlinks', async (req, res) => {
-        const playlistUrl = String(req.query.url || "").trim();
+    app.post('/playlist/getlinks', async (req, res) => {
+        const playlistUrl = String(req.body.url || "").trim();
         const result = await getPlaylistLinks(playlistUrl);
 
         if (result.error) {
-            return res.status(result.status).send(result.error);
+            return fail(res, `error.api.${result.error}`);
         }
 
         return res.status(200).json(result.urls);

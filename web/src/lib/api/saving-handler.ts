@@ -1,3 +1,4 @@
+
 import env from "$lib/env";
 import API from "$lib/api/api";
 import settings from "$lib/state/settings";
@@ -12,54 +13,94 @@ import { createDialog } from "$lib/state/dialogs";
 import { downloadButtonState } from "$lib/state/omnibox";
 import { createSavePipeline } from "$lib/task-manager/queue";
 import { waitForItemCompletion } from "$lib/state/task-manager/queue";
-import { addPendingItem, markPendingAsDone, markPendingAsError } from "$lib/state/task-manager/queue";
+import {
+    addPendingItem,
+    markPendingAsDone,
+    markPendingAsError
+} from "$lib/state/task-manager/queue";
 import { openQueuePopover } from "$lib/state/queue-visibility";
 
 import type { CobaltSaveRequestBody } from "$lib/types/api";
 
 type SavingHandlerArgs = {
-    url?: string,
-    request?: CobaltSaveRequestBody,
-    oldTaskId?: string
-}
+    url?: string;
+    request?: CobaltSaveRequestBody;
+    oldTaskId?: string;
+};
 
 const isPlaylistURL = (url: string): boolean => {
     try {
         const urlObj = new URL(url);
-        // YouTube playlist — only dedicated /playlist URLs,
-        // not video-within-playlist URLs like /watch?v=…&list=…
-        if ((urlObj.hostname === 'youtube.com' || urlObj.hostname.endsWith('.youtube.com'))
-            && urlObj.pathname === '/playlist'
-            && urlObj.searchParams.get('list')) {
+
+        if (
+            (urlObj.hostname === "youtube.com" ||
+                urlObj.hostname.endsWith(".youtube.com")) &&
+            urlObj.pathname === "/playlist" &&
+            urlObj.searchParams.get("list")
+        ) {
             return true;
         }
-        // SoundCloud set/playlist
-        if ((urlObj.hostname === 'soundcloud.com' || urlObj.hostname.endsWith('.soundcloud.com'))
-            && urlObj.pathname.includes('/sets/')) {
+
+        if (
+            (urlObj.hostname === "soundcloud.com" ||
+                urlObj.hostname.endsWith(".soundcloud.com")) &&
+            urlObj.pathname.includes("/sets/")
+        ) {
             return true;
         }
+
         return false;
     } catch {
         return false;
     }
 };
 
-const fetchPlaylistLinks = async (playlistUrl: string): Promise<string[] | null> => {
-    try {
-        const urlMatch = playlistUrl.match(/^(https?:\/\/.+?)(https?:\/\/)/i);
-        if (urlMatch) {
-            playlistUrl = urlMatch[1];
-        }
+const fetchPlaylistLinks = async (playlistUrl: string): Promise<string[]> => {
+    const urlMatch = playlistUrl.match(/^(https?:\/\/.+?)(https?:\/\/)/i);
 
-        const apiUrl = currentApiURL();
-        const response = await fetch(`${apiUrl}/playlist/getlinks?url=${encodeURIComponent(playlistUrl)}`);
-        if (!response.ok) {
-            return null;
-        }
-        return await response.json();
-    } catch {
-        return null;
+    if (urlMatch) {
+        playlistUrl = urlMatch[1];
     }
+
+    const apiUrl = currentApiURL();
+
+    let response: Response;
+
+    try {
+        response = await fetch(`${apiUrl}/playlist/getlinks`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ url: playlistUrl })
+        });
+    } catch {
+        throw new Error("error.api.unreachable");
+    }
+
+    let data: any;
+
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error("error.api.unknown");
+    }
+
+    if (data?.status === "error") {
+        throw new Error(
+            data.error?.code || "error.api.unknown"
+        );
+    }
+
+    if (!response.ok) {
+        throw new Error("error.api.unknown");
+    }
+
+    if (!Array.isArray(data)) {
+        throw new Error("error.api.unknown");
+    }
+
+    return data;
 };
 
 const processPlaylistItem = async (
@@ -83,20 +124,24 @@ const processPlaylistItem = async (
         videoQuality: getSetting("save", "videoQuality"),
         youtubeVideoCodec: getSetting("save", "youtubeVideoCodec"),
         youtubeVideoContainer: getSetting("save", "youtubeVideoContainer"),
-        youtubeHLS: env.ENABLE_DEPRECATED_YOUTUBE_HLS ? getSetting("save", "youtubeHLS") : undefined,
+        youtubeHLS: env.ENABLE_DEPRECATED_YOUTUBE_HLS
+            ? getSetting("save", "youtubeHLS")
+            : undefined,
         allowH265: getSetting("save", "allowH265"),
         convertGif: getSetting("save", "convertGif"),
     };
 
     const response = await API.request(requestBody);
-    
-    console.log(`[playlist] Item ${itemId} (${videoUrl}): API response status = ${response?.status}`);
-    
+
+    console.log(
+        `[playlist] Item ${itemId} (${videoUrl}): API response status = ${response?.status}`
+    );
+
     if (!response) {
         markPendingAsError(itemId, "error.api.unreachable");
         return;
     }
-    
+
     if (response.status === "error") {
         markPendingAsError(itemId, response.error.code);
         return;
@@ -106,19 +151,27 @@ const processPlaylistItem = async (
         downloadFile({ url: response.url, urlType: "redirect" });
         markPendingAsDone(itemId);
     } else if (response.status === "tunnel") {
-        // Fetch the file directly to ensure the tunnel stream is consumed
-        // before moving to the next item (avoids race conditions)
         try {
             console.log(`[playlist] Item ${itemId}: Tunnel URL = ${response.url}`);
+
             const tunnelResponse = await fetch(response.url);
-            console.log(`[playlist] Item ${itemId}: Response status = ${tunnelResponse.status}`);
+
+            console.log(
+                `[playlist] Item ${itemId}: Response status = ${tunnelResponse.status}`
+            );
+
             if (!tunnelResponse.ok) {
-                markPendingAsError(itemId, `error.tunnel.${tunnelResponse.status}`);
+                markPendingAsError(
+                    itemId,
+                    `error.tunnel.${tunnelResponse.status}`
+                );
                 return;
             }
+
             const blob = await tunnelResponse.blob();
             const filename = response.filename || `download_${itemId}`;
             const file = new File([blob], filename, { type: blob.type });
+
             downloadFile({ file });
             markPendingAsDone(itemId);
         } catch (e) {
@@ -126,12 +179,14 @@ const processPlaylistItem = async (
             markPendingAsError(itemId, "error.tunnel.fetch");
         }
     } else if (response.status === "local-processing") {
-        // For local processing, convert the pending item to a full pipeline item
-        // and wait for processing to complete before moving to next item
         createSavePipeline(response, requestBody, itemId);
+
         const result = await waitForItemCompletion(itemId);
+
         if (!result.success) {
-            console.error(`[playlist] Item ${itemId}: Pipeline failed with error: ${result.errorCode}`);
+            console.error(
+                `[playlist] Item ${itemId}: Pipeline failed with error: ${result.errorCode}`
+            );
         }
     } else if (response.status === "picker" && response.picker.length > 0) {
         downloadFile({ url: response.picker[0].url });
@@ -141,7 +196,11 @@ const processPlaylistItem = async (
     }
 };
 
-export const savingHandler = async ({ url, request, oldTaskId }: SavingHandlerArgs) => {
+export const savingHandler = async ({
+    url,
+    request,
+    oldTaskId
+}: SavingHandlerArgs) => {
     downloadButtonState.set("think");
 
     const error = (errorText: string) => {
@@ -158,58 +217,72 @@ export const savingHandler = async ({ url, request, oldTaskId }: SavingHandlerAr
             ],
             bodyText: errorText,
         });
-    }
+    };
 
     const getSetting = lazySettingGetter(get(settings));
 
     if (!request && !url) return;
 
-    // Handle playlist URLs separately
     if (url && !request && isPlaylistURL(url)) {
-        const links = await fetchPlaylistLinks(url);
-        
-        if (!links || links.length === 0) {
+        let links: string[];
+
+        try {
+            links = await fetchPlaylistLinks(url);
+        } catch (e) {
+            downloadButtonState.set("error");
+
+            const errorCode =
+                e instanceof Error
+                    ? e.message
+                    : "error.api.unknown";
+
+            return error(get(t)(errorCode));
+        }
+
+        if (links.length === 0) {
             downloadButtonState.set("error");
             return error(get(t)("error.api.fetch.empty"));
         }
 
         downloadButtonState.set("done");
 
-        // Create pending items for all playlist links to show them in queue
-        const pendingItems: { id: string; url: string }[] = links.map((link, index) => {
-            const id = uuid();
-            addPendingItem({
-                id,
-                state: "pending",
-                url: link,
-                filename: `Playlist item ${index + 1}`,
-                mediaType: "video",
-            });
-            return { id, url: link };
-        });
+        const pendingItems: { id: string; url: string }[] = links.map(
+            (link, index) => {
+                const id = uuid();
+
+                addPendingItem({
+                    id,
+                    state: "pending",
+                    url: link,
+                    filename: `Playlist item ${index + 1}`,
+                    mediaType: "video",
+                });
+
+                return { id, url: link };
+            }
+        );
 
         openQueuePopover();
 
-        // Process each video one by one with a delay between requests
-        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        
+        const delay = (ms: number) =>
+            new Promise(resolve => setTimeout(resolve, ms));
+
         for (let i = 0; i < pendingItems.length; i++) {
             const { id, url: videoUrl } = pendingItems[i];
+
             await processPlaylistItem(id, videoUrl, getSetting);
-            
-            // Add 1.5 second delay between requests to avoid rate limiting
+
             if (i < pendingItems.length - 1) {
                 await delay(1500);
             }
         }
-        
+
         return;
     }
 
     const selectedRequest = request || {
         url: url!,
 
-        // not lazy cuz default depends on device capabilities
         localProcessing: get(settings).save.localProcessing,
 
         alwaysProxy: getSetting("save", "alwaysProxy"),
@@ -228,11 +301,13 @@ export const savingHandler = async ({ url, request, oldTaskId }: SavingHandlerAr
         videoQuality: getSetting("save", "videoQuality"),
         youtubeVideoCodec: getSetting("save", "youtubeVideoCodec"),
         youtubeVideoContainer: getSetting("save", "youtubeVideoContainer"),
-        youtubeHLS: env.ENABLE_DEPRECATED_YOUTUBE_HLS ? getSetting("save", "youtubeHLS") : undefined,
+        youtubeHLS: env.ENABLE_DEPRECATED_YOUTUBE_HLS
+            ? getSetting("save", "youtubeHLS")
+            : undefined,
 
         allowH265: getSetting("save", "allowH265"),
         convertGif: getSetting("save", "convertGif"),
-    }
+    };
 
     const response = await API.request(selectedRequest);
 
@@ -282,16 +357,18 @@ export const savingHandler = async ({ url, request, oldTaskId }: SavingHandlerAr
 
     if (response.status === "picker") {
         downloadButtonState.set("done");
+
         const buttons = [
             {
                 text: get(t)("button.done"),
                 main: true,
-                action: () => { },
+                action: () => {},
             },
         ];
 
         if (response.audio) {
             const pickerAudio = response.audio;
+
             buttons.unshift({
                 text: get(t)("button.download.audio"),
                 main: false,
@@ -313,4 +390,4 @@ export const savingHandler = async ({ url, request, oldTaskId }: SavingHandlerAr
 
     downloadButtonState.set("error");
     return error(get(t)("error.api.unknown_response"));
-}
+};
