@@ -63,7 +63,7 @@
 
     "soundcloud.maybe_drm": "couldn't get this song, probably due to soundcloud adding DRM to uploads from major artists. try another link!",
 
-    "playlist.fetch_error": "could not fetch the playlist data, this is likely due to a client error when communicating with the service. try again in a few seconds, but if this issue sticks, please report it!",
+    "playlist.fetch_error": "could not fetch the playlist data, this is likely due to a client error when communicating with the service or the playlist no longer exists. try again in a few seconds, but if this issue sticks, please report it!",
     "playlist.invalid_link": "this link is not a valid playlist link or it is not supported, try a different link!",
     "playlist.limit_exceeded": "this playlist exceeds the maximum number of allowed items"
 }
