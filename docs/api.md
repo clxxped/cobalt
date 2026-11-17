@@ -210,7 +210,7 @@ body type: `application/json`
 
 | key         | type     | description                                              |
 |:------------|:---------|:---------------------------------------------------------|
-| `0-9999`    | `object` | link and number of the individual song in the playlist   |
+| `[links]`   | `object` | contains all of the playlist links                       |
 
 ## POST `/session`
 used for generating JWT tokens, if enabled. currently, cobalt only supports
