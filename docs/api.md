@@ -5,6 +5,7 @@ methods, acceptable values, headers, responses and everything else related to ma
 > hosted api instances (such as `api.cobalt.tools`) use bot protection and are **not** intended to be used in other projects without explicit permission. if you want to use the cobalt api, you should [host your own instance](/docs/run-an-instance.md) or ask an instance owner for access.
 
 - [POST /](#post)
+- [POST /playlist/getlinks](#post-playlistgetlinks)
 - [POST /session](#post-session)
 - [GET /](#get)
 - [GET /tunnel](#get-tunnel)
@@ -186,6 +187,30 @@ all keys in this table are optional.
 |:-------------|:---------|:----------------------------------------------------------------------------|
 | `service`    | `string` | origin service (optional)                                                   |
 | `limit`      | `number` | the maximum downloadable video duration or the rate limit window (optional) |
+
+## POST `/playlist/getlinks`
+used for getting all links from a youtube/soundcloud playlist.
+
+### request body
+body type: `application/json`
+
+#### usage
+| key               | type      | description/value                                               | default    |
+|:------------------|:----------|:----------------------------------------------------------------|:-----------|
+| `url`             | `string`  | playlist URL                                                    | *required* |
+
+#### error response
+| key          | type     | value                         |
+|:-------------|:---------|:------------------------------|
+| `status`     | `string` | `error`                       |
+| `error`      | `object` | error code & optional context |
+
+#### response
+body type: `application/json`
+
+| key         | type     | description                                              |
+|:------------|:---------|:---------------------------------------------------------|
+| `0-9999`    | `object` | link and number of the individual song in the playlist   |
 
 ## POST `/session`
 used for generating JWT tokens, if enabled. currently, cobalt only supports
